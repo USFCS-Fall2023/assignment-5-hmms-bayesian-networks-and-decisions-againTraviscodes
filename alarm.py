@@ -43,7 +43,7 @@ cpd_marycalls = TabularCPD(
     values=[[0.1, 0.7], [0.9, 0.3]],
     evidence=["Alarm"],
     evidence_card=[2],
-state_names={"Alarm":['yes','no'], "MaryCalls":['yes', 'no']},
+    state_names={"Alarm":['yes','no'], "MaryCalls":['yes', 'no']},
 )
 
 # Associating the parameters with the model structure
@@ -53,6 +53,6 @@ alarm_model.add_cpds(
 alarm_infer = VariableElimination(alarm_model)
 
 print(alarm_infer.query(variables=["JohnCalls"],evidence={"Earthquake":"yes"}))
-q = alarm_infer.query(variables=["JohnCalls", "Earthquake"],evidence={"Burglary":"yes","MaryCalls":"yes"}))
+q = alarm_infer.query(variables=["JohnCalls", "Earthquake"], evidence={"Burglary": "yes", "MaryCalls": "yes"})
 print(q)
 

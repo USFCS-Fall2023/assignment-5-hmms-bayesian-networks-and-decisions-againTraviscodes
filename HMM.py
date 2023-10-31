@@ -37,20 +37,19 @@ class HMM:
         and emission (basename.emit) files,
         as well as the probabilities."""
         filenames = [basename + '.trans', basename + '.emit']
-        # try:
         dicts = []
         for filename in filenames:
             with open(filename, 'r') as file:
-                # yay! I remembered how to open a file in python
                 lines = file.read().split('\n')
-                dict = None
+                d = {}
                 for line in lines:
                     kkv = line.split(' ')
-                    dict[kkv[0]] = {kkv[1]: kkv[2]}
-            dicts.append(dict)
+                    if kkv[0] in d.keys():
+                        d[kkv[0]].update({kkv[1]: kkv[2]})
+                    else:
+                        d[kkv[0]] = {kkv[1]: kkv[2]}
+            dicts.append(d)
         return dicts
-        # except FileNotFoundError | FileExistsError:
-        #     return  # TODO
 
     # you do this.
     def generate(self, n):

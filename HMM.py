@@ -32,7 +32,7 @@ class HMM:
         self.transitions = transitions
         self.emissions = emissions
 
-    def load(self, basename):
+    def load(self, basename):  # TODO: check designed usage
         """reads HMM structure from transition (basename.trans),
         and emission (basename.emit) files,
         as well as the probabilities."""
@@ -54,6 +54,9 @@ class HMM:
     # you do this.
     def generate(self, n):
         """return an n-length observation by randomly sampling from this HMM."""
+
+    def forward(self, observation):
+        pass  # TODO
 
     # you do this: Implement the Viterbi algorithm. Given an Observation (a list of outputs or emissions)
     # determine the most likely sequence of states.

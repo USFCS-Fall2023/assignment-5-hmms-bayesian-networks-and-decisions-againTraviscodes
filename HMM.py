@@ -3,6 +3,7 @@ import argparse
 import codecs
 import os
 import numpy
+import numpy as np
 
 
 # observations
@@ -64,19 +65,28 @@ class HMM:
             successor = random.choice(hidden_states)
             emissions_options = list(self.emissions[successor].keys())
             emission = random.choice(emissions_options)
-            successors.append(successor)  # successors.append((successor, emission))
+            successors.append(successor)
             emissions.append(emission)
-        return successors, emissions
+        o = Observation(successors, emissions)
+        return o
 
     def forward(self, observation):
-        rows, cols = (5, 5)
-        arr = [[0 for i in range(cols)] for j in range(rows)]
+        rows = len(self.transitions)
+        cols = len(observation)  # timestamps + 1
+        # allocate a matrix of s states len(self.transitions) and n observations
+        M = [[0 for i in range(cols)] for j in range(rows)]
+        states = list(self.transitions.keys())
+        for i, s in enumerate(states):
+            M[0][s] = self.transitions[self.START_STATE][s] * self.emissions[s][observation[0]]
+        for i in range(1, cols):
+            for j, s in enumerate(states):
+                sum = 0
+                for k, s2 in enumerate(states):
+                    sum += M[k][i-1] * self.transitions[s2][s] * self.emissions[observation[i]][s2]
+                    M[k][i] = sum
+        last_observation = [row[-1] for row in M]
+        return np.max(last_observation)
 
-        # cols = timestamps + 1; rows = # states
-        # M = matrix given lengths
-        # start state = '#' P=1
-
-        pass  # TODO
 
     # you do this: Implement the Viterbi algorithm. Given an Observation (a list of outputs or emissions)
     # determine the most likely sequence of states.

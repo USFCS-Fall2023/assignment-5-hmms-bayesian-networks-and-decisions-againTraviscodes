@@ -23,6 +23,8 @@ class Observation:
 
 # hmm model
 class HMM:
+    START_STATE = "#"  # TODO: add dependency injection in constructor
+
     def __init__(self, transitions={}, emissions={}):
         """creates a model from transition and emission probabilities"""
         # Both of these are dictionaries of dictionaries. e.g. :
@@ -32,7 +34,7 @@ class HMM:
         self.transitions = transitions
         self.emissions = emissions
 
-    def load(self, basename):  # TODO: check designed usage
+    def load(self, basename):
         """reads HMM structure from transition (basename.trans),
         and emission (basename.emit) files,
         as well as the probabilities."""
@@ -55,7 +57,16 @@ class HMM:
     # you do this.
     def generate(self, n):
         """return an n-length observation by randomly sampling from this HMM."""
-        # TODO
+        hidden_states = list(self.transitions[self.START_STATE].keys())
+        successors = []
+        emissions = []
+        for i in range(n):
+            successor = random.choice(hidden_states)
+            emissions_options = list(self.emissions[successor].keys())
+            emission = random.choice(emissions_options)
+            successors.append(successor)  # successors.append((successor, emission))
+            emissions.append(emission)
+        return successors, emissions
 
     def forward(self, observation):
         rows, cols = (5, 5)

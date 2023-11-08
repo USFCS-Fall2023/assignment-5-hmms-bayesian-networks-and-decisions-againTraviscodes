@@ -2,6 +2,7 @@ import random
 
 from HMM import HMM
 from alarm import belief_networks_alarm as bn_a
+from carnet import belief_networks_carnet as bn_c
 
 
 # def main():
@@ -20,3 +21,4 @@ if __name__ == '__main__':
     # print(str(emission))
 
     bn_a()
+    bn_c()

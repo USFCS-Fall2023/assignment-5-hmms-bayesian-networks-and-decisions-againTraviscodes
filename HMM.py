@@ -37,7 +37,6 @@ class HMM:
         and emission (basename.emit) files,
         as well as the probabilities."""
         filenames = [basename + '.trans', basename + '.emit']
-        dicts = []
         for filename in filenames:
             with open(filename, 'r') as file:
                 lines = file.read().split('\n')
@@ -48,21 +47,38 @@ class HMM:
                         d[kkv[0]].update({kkv[1]: kkv[2]})
                     else:
                         d[kkv[0]] = {kkv[1]: kkv[2]}
-            dicts.append(d)
-        return dicts
+            if filename.endswith('.trans'):
+                self.transitions = d
+            else:
+                self.emissions = d
 
     # you do this.
     def generate(self, n):
         """return an n-length observation by randomly sampling from this HMM."""
+        # TODO
 
     def forward(self, observation):
+        rows, cols = (5, 5)
+        arr = [[0 for i in range(cols)] for j in range(rows)]
+
+        # cols = timestamps + 1; rows = # states
+        # M = matrix given lengths
+        # start state = '#' P=1
+
         pass  # TODO
 
     # you do this: Implement the Viterbi algorithm. Given an Observation (a list of outputs or emissions)
     # determine the most likely sequence of states.
-
     def viterbi(self, observation):
         """given an observation,
         find and return the state sequence that generated
         the output sequence, using the Viterbi algorithm.
         """
+
+
+# def main(args):
+#     hmm = HMM()
+#     # TODO: get command line arguments
+#
+#
+# main()

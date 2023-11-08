@@ -1,6 +1,7 @@
 import random
 
 from HMM import HMM
+from alarm import belief_networks_alarm as bn_a
 
 
 # def main():
@@ -12,8 +13,10 @@ from HMM import HMM
 
 
 if __name__ == '__main__':
-    hmm = HMM()
-    hmm.load('partofspeech.browntags.trained')  # 'partofspeech.browntags.trained' 'two_english'
+    # hmm = HMM()
+    # hmm.load('partofspeech.browntags.trained')  # 'partofspeech.browntags.trained' 'two_english'
+    #
+    # successors, emission = hmm.generate(20)  # n = 20, changeable
+    # print(str(emission))
 
-    successors, emission = hmm.generate(20)  # n = 20, changeable
-    print(str(emission))
+    bn_a()

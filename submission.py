@@ -14,11 +14,16 @@ from carnet import belief_networks_carnet as bn_c
 
 
 if __name__ == '__main__':
-    # hmm = HMM()
-    # hmm.load('partofspeech.browntags.trained')  # 'partofspeech.browntags.trained' 'two_english'
-    #
-    # successors, emission = hmm.generate(20)  # n = 20, changeable
-    # print(str(emission))
+    hmm = HMM()
+    hmm.load('partofspeech.browntags.trained')  # 'partofspeech.browntags.trained' 'two_english'
 
-    bn_a()
-    bn_c()
+    observation = hmm.generate(20)  # n = 20, changeable
+    print(observation)
+
+    obsrv = hmm.load_observation('ambiguous_sents.obs')  # 'ambiguous_sents.obs' 'english_words.obs'
+    for o in obsrv:
+        print(hmm.forward(o))
+    # print(hmm.forward(observation.outputseq))
+
+    # bn_a()
+    # bn_c()

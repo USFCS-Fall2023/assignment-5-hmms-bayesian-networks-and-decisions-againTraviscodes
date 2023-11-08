@@ -23,14 +23,12 @@ def belief_networks_carnet():
         values=[[0.70], [0.30]],
         state_names={"Battery": ['Works', "Doesn't work"]},
     )
-
     cpd_gas = TabularCPD(
         variable="Gas",
         variable_card=2,
         values=[[0.40], [0.60]],
         state_names={"Gas": ['Full', "Empty"]},
     )
-
     cpd_radio = TabularCPD(
         variable="Radio",
         variable_card=2,
@@ -40,7 +38,6 @@ def belief_networks_carnet():
         state_names={"Radio": ["turns on", "Doesn't turn on"],
                      "Battery": ['Works', "Doesn't work"]}
     )
-
     cpd_ignition = TabularCPD(
         variable="Ignition",
         variable_card=2,
@@ -50,7 +47,6 @@ def belief_networks_carnet():
         state_names={"Ignition": ["Works", "Doesn't work"],
                      "Battery": ['Works', "Doesn't work"]}
     )
-
     cpd_starts = TabularCPD(
         variable="Starts",
         variable_card=2,
@@ -62,7 +58,6 @@ def belief_networks_carnet():
                      "Gas": ['Full', "Empty"],
                      "KeyPresent": ["yes", "no"]},
     )
-
     cpd_moves = TabularCPD(
         variable="Moves",
         variable_card=2,
@@ -72,7 +67,6 @@ def belief_networks_carnet():
         state_names={"Moves": ["yes", "no"],
                      "Starts": ['yes', 'no']}
     )
-
     cpd_keypresent = TabularCPD(
         variable="KeyPresent",
         variable_card=2,
@@ -82,11 +76,10 @@ def belief_networks_carnet():
 
     # Associating the parameters with the model structure
     car_model.add_cpds(cpd_starts, cpd_ignition, cpd_gas, cpd_radio, cpd_battery, cpd_moves, cpd_keypresent)
-
     car_infer = VariableElimination(car_model)
-
     # print(car_infer.query(variables=["Moves"],evidence={"Radio":"turns on", "Starts":"yes"}))
 
+    # Part 2
     # n02_1 = car_infer.query(variables=['Battery'], evidence={'Moves': 'no'})
     # n02_2 = car_infer.query(variables=['Starts'], evidence={'Radio': "Doesn't turn on"})
     # n02_3_1 = car_infer.query(variables=['Radio'], evidence={'Battery': 'Works'})  # , 'Gas': 'Empty'
@@ -114,6 +107,7 @@ def belief_networks_carnet():
     # print("Starts given Radio turns on, Gas Full")
     # print(n02_5)
 
+    # Personal testing for part 3, question 3
     n03_1 = car_infer.query(variables=["Moves"], evidence={"Ignition": "Works", "KeyPresent": "yes"})
     n03_2 = car_infer.query(variables=["Moves"], evidence={"Ignition": "Works", "KeyPresent": "yes", "Gas": "Full"})
 

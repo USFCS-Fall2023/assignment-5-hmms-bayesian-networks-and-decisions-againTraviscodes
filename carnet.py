@@ -50,7 +50,8 @@ def belief_networks_carnet():
     cpd_starts = TabularCPD(
         variable="Starts",
         variable_card=2,
-        values=[[0.99, 0.01, 0.01, 0.01], [0.01, 0.01, 0.01, 0.01]],
+        values=[[0.99, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01],
+                [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01]],  # TODO: do I need to calculate these?
         evidence=["Ignition", "Gas", "KeyPresent"],
         evidence_card=[2, 2, 2],
         state_names={"Starts": ['yes', 'no'],
@@ -78,6 +79,25 @@ def belief_networks_carnet():
     car_model.add_cpds(cpd_starts, cpd_ignition, cpd_gas, cpd_radio, cpd_battery, cpd_moves, cpd_keypresent)
     car_infer = VariableElimination(car_model)
     # print(car_infer.query(variables=["Moves"],evidence={"Radio":"turns on", "Starts":"yes"}))
+
+    n03_1 = car_infer.query(variables=["Moves"], evidence={"Ignition": "Works", "KeyPresent": "yes"})
+    n03_2 = car_infer.query(variables=["Moves"], evidence={"Ignition": "Works", "KeyPresent": "yes", "Gas": "Full"})
+
+    print(n03_1)
+    print("Given Gas Full")
+    print(n03_2)
+
+
+def get_changes(l1, l2):
+    for i in range(len(l1)):
+        if l1[i] != l2[i]:
+            return True
+    return False
+
+
+if __name__ == '__main__':
+    belief_networks_carnet()
+
 
     # Part 2
     # n02_1 = car_infer.query(variables=['Battery'], evidence={'Moves': 'no'})
@@ -108,20 +128,3 @@ def belief_networks_carnet():
     # print(n02_5)
 
     # Personal testing for part 3, question 3
-    n03_1 = car_infer.query(variables=["Moves"], evidence={"Ignition": "Works", "KeyPresent": "yes"})
-    n03_2 = car_infer.query(variables=["Moves"], evidence={"Ignition": "Works", "KeyPresent": "yes", "Gas": "Full"})
-
-    print(n03_1)
-    print("Given Gas Full")
-    print(n03_2)
-
-
-def get_changes(l1, l2):
-    for i in range(len(l1)):
-        if l1[i] != l2[i]:
-            return True
-    return False
-
-
-if __name__ == '__main__':
-    belief_networks_carnet()

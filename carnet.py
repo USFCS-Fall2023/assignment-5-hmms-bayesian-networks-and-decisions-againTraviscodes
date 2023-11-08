@@ -51,7 +51,7 @@ def belief_networks_carnet():
         variable="Starts",
         variable_card=2,
         values=[[0.99, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01],
-                [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01]],  # TODO: do I need to calculate these?
+                [0.01, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99]],
         evidence=["Ignition", "Gas", "KeyPresent"],
         evidence_card=[2, 2, 2],
         state_names={"Starts": ['yes', 'no'],
@@ -80,9 +80,40 @@ def belief_networks_carnet():
     car_infer = VariableElimination(car_model)
     # print(car_infer.query(variables=["Moves"],evidence={"Radio":"turns on", "Starts":"yes"}))
 
+    # Part 2
+    n02_1 = car_infer.query(variables=['Battery'], evidence={'Moves': 'no'})
+    n02_2 = car_infer.query(variables=['Starts'], evidence={'Radio': "Doesn't turn on"})
+    n02_3_1 = car_infer.query(variables=['Radio'], evidence={'Battery': 'Works'})  # , 'Gas': 'Empty'
+    n02_3_2 = car_infer.query(variables=['Radio'], evidence={'Battery': 'Works', 'Gas': 'Full'})
+    n02_4_1 = car_infer.query(variables=['Moves'], evidence={'Ignition': 'Works'})  # , 'Gas': 'Empty'
+    n02_4_2 = car_infer.query(variables=['Moves'], evidence={'Ignition': 'Works', 'Gas': 'Full'})
+    n02_5 = car_infer.query(variables=['Starts'], evidence={'Radio': 'turns on', 'Gas': 'Full'})
+
+    print("Part 2")
+    print("Moves given Battery Doesn't work")
+    print(n02_1)
+    print("Starts given Radio Doesn't turn on")
+    print(n02_2)
+    print("Radio given Battery Works")  # , Gas Empty
+    print(n02_3_1)
+    print("Radio given Battery Works, Gas Full")
+    print(n02_3_2)
+    values_changed = get_changes(n02_3_1.values, n02_3_2.values)
+    print(f"The values change given Gas Full: {values_changed}")
+    print("Moves given Ignition Works")  # , Gas Empty
+    print(n02_4_1)
+    print("Moves given Ignition Works, Gas Full")
+    print(n02_4_2)
+    values_changed = get_changes(n02_4_1.values, n02_4_2.values)
+    print(f"The values change given Gas Full: {values_changed}")
+    print("Starts given Radio turns on, Gas Full")
+    print(n02_5)
+
+    # Personal testing for part 3, question 3
     n03_1 = car_infer.query(variables=["Moves"], evidence={"Ignition": "Works", "KeyPresent": "yes"})
     n03_2 = car_infer.query(variables=["Moves"], evidence={"Ignition": "Works", "KeyPresent": "yes", "Gas": "Full"})
 
+    print("Part 3")
     print(n03_1)
     print("Given Gas Full")
     print(n03_2)
@@ -97,34 +128,3 @@ def get_changes(l1, l2):
 
 if __name__ == '__main__':
     belief_networks_carnet()
-
-
-    # Part 2
-    # n02_1 = car_infer.query(variables=['Battery'], evidence={'Moves': 'no'})
-    # n02_2 = car_infer.query(variables=['Starts'], evidence={'Radio': "Doesn't turn on"})
-    # n02_3_1 = car_infer.query(variables=['Radio'], evidence={'Battery': 'Works'})  # , 'Gas': 'Empty'
-    # n02_3_2 = car_infer.query(variables=['Radio'], evidence={'Battery': 'Works', 'Gas': 'Full'})
-    # n02_4_1 = car_infer.query(variables=['Moves'], evidence={'Ignition': 'Works'})  # , 'Gas': 'Empty'
-    # n02_4_2 = car_infer.query(variables=['Moves'], evidence={'Ignition': 'Works', 'Gas': 'Full'})
-    # n02_5 = car_infer.query(variables=['Starts'], evidence={'Radio': 'turns on', 'Gas': 'Full'})
-    #
-    # print("Moves given Battery Doesn't work")
-    # print(n02_1)
-    # print("Starts given Radio Doesn't turn on")
-    # print(n02_2)
-    # print("Radio given Battery Works")  # , Gas Empty
-    # print(n02_3_1)
-    # print("Radio given Battery Works, Gas Full")
-    # print(n02_3_2)
-    # values_changed = get_changes(n02_3_1.values, n02_3_2.values)
-    # print(f"The values change given Gas Full: {values_changed}")
-    # print("Moves given Ignition Works")  # , Gas Empty
-    # print(n02_4_1)
-    # print("Moves given Ignition Works, Gas Full")
-    # print(n02_4_2)
-    # values_changed = get_changes(n02_4_1.values, n02_4_2.values)
-    # print(f"The values change given Gas Full: {values_changed}")
-    # print("Starts given Radio turns on, Gas Full")
-    # print(n02_5)
-
-    # Personal testing for part 3, question 3

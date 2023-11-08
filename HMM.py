@@ -70,20 +70,34 @@ class HMM:
         o = Observation(successors, emissions)
         return o
 
+    def load_observation(self, filename):
+        with open(filename, 'r') as file:
+            observations = []
+            lines = file.read().split('\n')
+            for line in lines:
+                if line == '':
+                    continue
+                words = line.split(' ')
+                observations.append(words)
+            return observations
+
     def forward(self, observation):
         rows = len(self.transitions)
-        cols = len(observation)  # timestamps + 1
-        # allocate a matrix of s states len(self.transitions) and n observations
+        cols = len(observation)
         M = [[0 for i in range(cols)] for j in range(rows)]
         states = list(self.transitions.keys())
+
+        # dp tabulation of probabilities
         for i, s in enumerate(states):
-            M[0][s] = self.transitions[self.START_STATE][s] * self.emissions[s][observation[0]]
+            start_prob = self.transitions[self.START_STATE][s]
+            prob_given_obsrv = self.emissions[s][observation[0]]  # | 0  # TODO: debug key error @ 'observation[0]'
+            M[0][s] = start_prob * prob_given_obsrv
         for i in range(1, cols):
-            for j, s in enumerate(states):
-                sum = 0
+            for s in states:
                 for k, s2 in enumerate(states):
-                    sum += M[k][i-1] * self.transitions[s2][s] * self.emissions[observation[i]][s2]
-                    M[k][i] = sum
+                    M[k][i] += M[k][i-1] * self.transitions[s2][s] * self.emissions[observation[i]][s2]
+
+        # find and return most probable state
         last_observation = [row[-1] for row in M]
         return np.max(last_observation)
 

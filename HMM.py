@@ -73,34 +73,41 @@ class HMM:
     def load_observation(self, filename):
         with open(filename, 'r') as file:
             observations = []
-            lines = file.read().split('\n')
+            lines = file.read().split('\n\n')
             for line in lines:
                 if line == '':
                     continue
-                words = line.split(' ')
-                observations.append(words)
+                emissions = line.strip().split(' ')
+                o = Observation([], emissions)
+                observations.append(o)
             return observations
 
     def forward(self, observation):
         states = list(self.transitions[self.START_STATE].keys())
-        rows = len(states)
+        seq = observation.outputseq
+        rows = len(states) + 1
         cols = len(observation)
         M = [[0 for i in range(cols)] for j in range(rows)]
+        print("Established local vars...")
 
         # dp tabulation of probabilities
+        print("Setting up table...")
         for i, s in enumerate(states):
             start_prob = self.transitions[self.START_STATE][s]  # if s not == '#'
-            prob_given_obsrv = self.emissions[s][observation[0]] if observation[0] in self.emissions[s].keys() else 0  # TODO: debug key error @ 'observation[0]'
-            M[0][i] = start_prob * prob_given_obsrv
+            prob_given_obsrv = self.emissions[s][seq[0]] if seq[0] in self.emissions[s].keys() else 0  # TODO: debug key error @ 'observation[0]'
+            M[i][0] = start_prob * prob_given_obsrv  # prev: had the row and col mixed up ?
+        print("Set table up...")
+        print("Propagating table...")
         for i in range(1, cols):
             for s in states:
                 for k, s2 in enumerate(states):
-                    M[k][i] += M[k][i-1] * self.transitions[s2][s] * self.emissions[s][observation[i]]
+                    M[k][i] += M[k][i-1] * self.transitions[s2][s] * self.emissions[s][seq[i]]
+        print("Propagated table...")
 
         # find and return most probable state
-        last_observation = [row[-1] for row in M]
-        state_prob = np.max(last_observation)
-        return states[last_observation.index(state_prob)]
+        last_emission = [row[-1] for row in M]
+        state_prob = np.max(last_emission)
+        return states[last_emission.index(state_prob)]
 
 
     # you do this: Implement the Viterbi algorithm. Given an Observation (a list of outputs or emissions)

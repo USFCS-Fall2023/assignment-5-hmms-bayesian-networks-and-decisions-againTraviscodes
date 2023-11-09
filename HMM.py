@@ -88,21 +88,16 @@ class HMM:
         rows = len(states) + 1
         cols = len(observation)
         M = [[0 for i in range(cols)] for j in range(rows)]
-        print("Established local vars...")
 
         # dp tabulation of probabilities
-        print("Setting up table...")
         for i, s in enumerate(states):
-            start_prob = self.transitions[self.START_STATE][s]  # if s not == '#'
-            prob_given_obsrv = self.emissions[s][seq[0]] if seq[0] in self.emissions[s].keys() else 0  # TODO: debug key error @ 'observation[0]'
-            M[i][0] = start_prob * prob_given_obsrv  # prev: had the row and col mixed up ?
-        print("Set table up...")
-        print("Propagating table...")
+            start_prob = self.transitions[self.START_STATE][s]
+            prob_given_obsrv = self.emissions[s].get(seq[0], 0.0)
+            M[i][0] = start_prob * prob_given_obsrv
         for i in range(1, cols):
             for s in states:
                 for k, s2 in enumerate(states):
-                    M[k][i] += M[k][i-1] * self.transitions[s2][s] * self.emissions[s][seq[i]]
-        print("Propagated table...")
+                    M[k][i] += M[k][i-1] * self.transitions[s2][s] * self.emissions[s].get(seq[i], 0.0)
 
         # find and return most probable state
         last_emission = [row[-1] for row in M]

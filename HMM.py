@@ -98,22 +98,12 @@ class HMM:
             for j, s in enumerate(states):
                 sum = 0
                 for k, s2 in enumerate(states):
-                    # M[k][i] += M[k][i-1] * self.transitions[s2][s] * self.emissions[s].get(seq[i], 0.0)
                     sum += M[k][i-1] * self.transitions[s2][s] * self.emissions[s].get(seq[i], 0.0)
                 M[j][i] = sum
 
-        # find and return most probable state
-        # f_state = None
-        # f_prob = -1
-        # for n, row in enumerate(M):
-        #     last = row[-1]
-        #     if last > f_prob:
-        #         f_state = states[n]
-        #         f_prob = last
-        # return f_state
         last_emission = [row[-1] for row in M]
         state_prob_idx = np.argmax(last_emission)
-        return states[state_prob_idx]  # TODO: debug returns first state (correctly); want last state
+        return states[state_prob_idx]
 
 
 

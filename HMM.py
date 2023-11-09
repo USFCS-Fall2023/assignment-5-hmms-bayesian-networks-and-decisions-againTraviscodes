@@ -13,7 +13,7 @@ class Observation:
         self.outputseq = outputseq  # sequence of outputs
 
     def __str__(self):
-        return ' '.join(self.stateseq) + '\n ' + ' '.join(self.outputseq) + '\n'
+        return ' '.join(self.stateseq) + '\n' + ' '.join(self.outputseq) + '\n'
 
     def __repr__(self):
         return self.__str__()
@@ -47,9 +47,9 @@ class HMM:
                 for line in lines:
                     kkv = line.split(' ')
                     if kkv[0] in d.keys():
-                        d[kkv[0]].update({kkv[1]: kkv[2]})
+                        d[kkv[0]].update({kkv[1]: float(kkv[2])})
                     else:
-                        d[kkv[0]] = {kkv[1]: kkv[2]}
+                        d[kkv[0]] = {kkv[1]: float(kkv[2])}
             if filename.endswith('.trans'):
                 self.transitions = d
             else:
@@ -82,24 +82,25 @@ class HMM:
             return observations
 
     def forward(self, observation):
-        rows = len(self.transitions)
+        states = list(self.transitions[self.START_STATE].keys())
+        rows = len(states)
         cols = len(observation)
         M = [[0 for i in range(cols)] for j in range(rows)]
-        states = list(self.transitions.keys())
 
         # dp tabulation of probabilities
         for i, s in enumerate(states):
-            start_prob = self.transitions[self.START_STATE][s]
-            prob_given_obsrv = self.emissions[s][observation[0]]  # | 0  # TODO: debug key error @ 'observation[0]'
-            M[0][s] = start_prob * prob_given_obsrv
+            start_prob = self.transitions[self.START_STATE][s]  # if s not == '#'
+            prob_given_obsrv = self.emissions[s][observation[0]] if observation[0] in self.emissions[s].keys() else 0  # TODO: debug key error @ 'observation[0]'
+            M[0][i] = start_prob * prob_given_obsrv
         for i in range(1, cols):
             for s in states:
                 for k, s2 in enumerate(states):
-                    M[k][i] += M[k][i-1] * self.transitions[s2][s] * self.emissions[observation[i]][s2]
+                    M[k][i] += M[k][i-1] * self.transitions[s2][s] * self.emissions[s][observation[i]]
 
         # find and return most probable state
         last_observation = [row[-1] for row in M]
-        return np.max(last_observation)
+        state_prob = np.max(last_observation)
+        return states[last_observation.index(state_prob)]
 
 
     # you do this: Implement the Viterbi algorithm. Given an Observation (a list of outputs or emissions)

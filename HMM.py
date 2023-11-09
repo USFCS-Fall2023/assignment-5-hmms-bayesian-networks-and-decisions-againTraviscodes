@@ -114,9 +114,21 @@ class HMM:
         """
 
 
-# def main(args):
-#     hmm = HMM()
-#     # TODO: get command line arguments
-#
-#
-# main()
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--generate", type=str)
+    parser.add_argument("--forward", type=str)
+    parser.add_argument("--viterbi", type=str)
+
+    args = parser.parse_args()
+    hmm = HMM()
+    hmm.load('partofspeech.browntags.trained')  # TODO: get flag value
+
+    if args.forward:
+        pass  # TODO
+    if args.viterbi:
+        pass  # TODO
+    if args.generate:
+        pass  # TODO
+
+

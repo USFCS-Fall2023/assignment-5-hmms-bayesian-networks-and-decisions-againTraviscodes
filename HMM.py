@@ -24,7 +24,7 @@ class Observation:
 
 # hmm model
 class HMM:
-    START_STATE = "#"  # TODO: add dependency injection in constructor
+    START_STATE = "#"
 
     def __init__(self, transitions={}, emissions={}):
         """creates a model from transition and emission probabilities"""
@@ -87,22 +87,35 @@ class HMM:
         seq = observation.outputseq
         rows = len(states) + 1
         cols = len(observation)
-        M = [[0 for i in range(cols)] for j in range(rows)]
+        M = [[0.0 for i in range(cols)] for j in range(rows)]
 
         # dp tabulation of probabilities
         for i, s in enumerate(states):
             start_prob = self.transitions[self.START_STATE][s]
-            prob_given_obsrv = self.emissions[s].get(seq[0], 0.0)
-            M[i][0] = start_prob * prob_given_obsrv
+            prob_given_observation = self.emissions[s].get(seq[0], 0.0)
+            M[i][0] = start_prob * prob_given_observation
         for i in range(1, cols):
-            for s in states:
+            for j, s in enumerate(states):
+                sum = 0
                 for k, s2 in enumerate(states):
-                    M[k][i] += M[k][i-1] * self.transitions[s2][s] * self.emissions[s].get(seq[i], 0.0)
+                    # M[k][i] += M[k][i-1] * self.transitions[s2][s] * self.emissions[s].get(seq[i], 0.0)
+                    sum += M[k][i-1] * self.transitions[s2][s] * self.emissions[s].get(seq[i], 0.0)
+                M[j][i] = sum
 
         # find and return most probable state
+        # f_state = None
+        # f_prob = -1
+        # for n, row in enumerate(M):
+        #     last = row[-1]
+        #     if last > f_prob:
+        #         f_state = states[n]
+        #         f_prob = last
+        # return f_state
         last_emission = [row[-1] for row in M]
-        state_prob = np.max(last_emission)
-        return states[last_emission.index(state_prob)]
+        state_prob_idx = np.argmax(last_emission)
+        return states[state_prob_idx]  # TODO: debug returns first state (correctly); want last state
+
+
 
 
     # you do this: Implement the Viterbi algorithm. Given an Observation (a list of outputs or emissions)

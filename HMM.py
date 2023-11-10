@@ -124,8 +124,6 @@ class HMM:
                 V[j][i] = max(probabilities)
 
         # backtrace finding most probable states
-        # state_idx = np.argmax([row[-1] for row in V])
-        # state_seq = [states[state_idx]]
         state_seq = []
         for i in range(cols, 0, -1):
             state_idx = np.argmax([row[i - 1] for row in V])

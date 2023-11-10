@@ -13,7 +13,7 @@ class Observation:
         self.outputseq = outputseq  # sequence of outputs
 
     def __str__(self):
-        return ' '.join(self.stateseq) + '\n' + ' '.join(self.outputseq) + '\n'
+        return ' '.join(self.stateseq) + '\n' + ' '.join(self.outputseq)
 
     def __repr__(self):
         return self.__str__()
@@ -127,20 +127,31 @@ class HMM:
 
 
 if __name__ == "__main__":
+    '''
+        To run via the command line for forward() and viterbi():
+            python HMM.py <filename> --<method> <test_data_filename>
+            
+            e.g.: python HMM.py partofspeech.browntags.trained --forward ambiguous_sents.obs
+            
+        For generate():
+            python HMM.py <filename> --generate <number>
+    '''
     parser = argparse.ArgumentParser()
-    parser.add_argument("--generate", type=str)
+    parser.add_argument("filename")
+    parser.add_argument("--generate", type=int)
     parser.add_argument("--forward", type=str)
     parser.add_argument("--viterbi", type=str)
 
     args = parser.parse_args()
     hmm = HMM()
-    hmm.load('partofspeech.browntags.trained')  # TODO: get flag value
 
+    if args.filename:
+        hmm.load(args.filename)
     if args.forward:
-        pass  # TODO
+        o = hmm.load_observation(args.forward)
+        print(f"The most likely final state is {hmm.forward(o)}")
     if args.viterbi:
-        pass  # TODO
+        o = hmm.load_observation(args.viterbi)
+        print(' '.join(hmm.viterbi(o)))
     if args.generate:
-        pass  # TODO
-
-
+        print(hmm.generate(args.generate))

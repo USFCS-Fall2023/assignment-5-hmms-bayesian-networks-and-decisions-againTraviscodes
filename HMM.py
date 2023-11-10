@@ -101,20 +101,36 @@ class HMM:
                     sum += M[k][i-1] * self.transitions[s2][s] * self.emissions[s].get(seq[i], 0.0)
                 M[j][i] = sum
 
+        # find and return most probable state
         last_emission = [row[-1] for row in M]
         state_prob_idx = np.argmax(last_emission)
         return states[state_prob_idx]
 
-
-
-
-    # you do this: Implement the Viterbi algorithm. Given an Observation (a list of outputs or emissions)
-    # determine the most likely sequence of states.
     def viterbi(self, observation):
-        """given an observation,
-        find and return the state sequence that generated
-        the output sequence, using the Viterbi algorithm.
-        """
+        states = list(self.transitions[self.START_STATE].keys())
+        seq = observation.outputseq
+        rows = len(states) + 1
+        cols = len(observation)
+        V = [[0.0 for i in range(cols)] for j in range(rows)]
+
+        # dp tabulation of probabilities
+        for i, s in enumerate(states):
+            start_prob = self.transitions[self.START_STATE][s]
+            prob_given_observation = self.emissions[s].get(seq[0], 0.0)
+            V[i][0] = start_prob * prob_given_observation
+        for i in range(1, cols):
+            for j, s in enumerate(states):
+                probabilities = [V[k][i - 1] + self.transitions[s2][s] + self.emissions[s].get(seq[i], 0.0) for k, s2 in enumerate(states)]
+                V[j][i] = max(probabilities)
+
+        # backtrace finding most probable states
+        # state_idx = np.argmax([row[-1] for row in V])
+        # state_seq = [states[state_idx]]
+        state_seq = []
+        for i in range(cols, 0, -1):
+            state_idx = np.argmax([row[i - 1] for row in V])
+            state_seq.insert(0, states[state_idx])
+        return state_seq
 
 
 if __name__ == "__main__":

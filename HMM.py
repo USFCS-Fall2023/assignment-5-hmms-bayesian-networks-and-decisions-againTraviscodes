@@ -71,16 +71,11 @@ class HMM:
         return o
 
     def load_observation(self, filename):
-        with open(filename, 'r') as file:
-            observations = []
-            lines = file.read().split('\n\n')
-            for line in lines:
-                if line == '':
-                    continue
-                emissions = line.strip().split(' ')
-                o = Observation([], emissions)
-                observations.append(o)
-            return observations
+        try:
+            with open(filename, 'r') as file:
+                return Observation([], file.read().strip().split())
+        except FileNotFoundError | FileExistsError:
+            print(f"{filename} wasn't found. Please enter a different filename")
 
     def forward(self, observation):
         states = list(self.transitions[self.START_STATE].keys())

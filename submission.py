@@ -20,7 +20,7 @@ if __name__ == '__main__':
 
     # Section 3: Forward
     print("\nForward")
-    o = hmm.load_observation('ambiguous_sents.obs')  # TODO make entire file = 1 observation
+    o = hmm.load_observation('ambiguous_sents.obs')
     # o = hmm.load_observation('english_words.obs')
     print(hmm.forward(o))
 
